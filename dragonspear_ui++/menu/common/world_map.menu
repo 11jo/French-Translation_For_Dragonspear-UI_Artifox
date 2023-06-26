@@ -1,0 +1,104 @@
+menu
+{
+	name "WORLD_MAP"
+#if GAME_VERSION == 'sod' then
+	align center top
+#else
+	align center center
+#end
+	onOpen "
+	#if GAME_VERSION == 'iwd' then
+		if showJournal == 1 and not duiSettings:get('largeJournal') then
+			Infinity_PopMenu('JOURNAL_SMALL')
+		end
+	#end
+	#if ENABLE_SCREEN_BACKGROUNDS and WORLD_MAP_BACKGROUND then
+		Infinity_SetBackground('SCREEN_BACKGROUND')
+	#end
+	"
+#if ENABLE_SCREEN_BACKGROUNDS and WORLD_MAP_BACKGROUND then
+	onClose "Infinity_SetBackground(nil)"
+#end
+	label
+	{
+	#if GAME_VERSION == 'sod' then
+		area 0 0 1072 2160
+		mosaic RGWMAP
+	#else
+		area 0 0 1026 590
+		mosaic RGWMAP1
+	#end
+	}
+#if GAME_VERSION == 'sod' then
+	label
+	{
+		area 211 22 583 44
+		text "WORLD_MAP_TITLE"
+		text style "title"
+	}
+#else
+--	label
+--	{
+--		area 211 22 583 44
+--		text "WORLD_MAP_TITLE"
+--		text style "title"
+--	}
+#end
+	button
+	{
+		on escape
+	#if GAME_VERSION == 'sod' then
+		area 51 35 66 58
+	#else
+		area 0 0 0 0 --51 35 66 58
+	#end
+		bam "MAPBUT"
+		action
+		"
+			worldMapScreen:OnCancelButtonClick()
+--			e:GetActiveEngine():OnLeftPanelButtonClick(0)
+		"
+	}
+	map
+	{
+	#if GAME_VERSION == 'sod' then
+		area 38 0 1005 1505
+	#else
+		area 14 12 1000 564
+	#end
+		worldmap
+		action
+		"
+			local oneClickTravel = duiSettings:get('oneClickTravel')
+			worldMapScreen:OnMapMouseDown(eventXCoord,eventYCoord)
+			if oneClickTravel and worldMapScreen:IsTravelButtonClickable() then
+				worldMapScreen:TravelToSelected()
+			end
+		"
+		actionDbl
+		"
+			worldMapScreen:TravelToSelected()
+		"
+		actionDrag
+		"
+			worldMapScreen:OnMapMouseMove(eventXCoord,eventYCoord)
+		"
+		actionAlt "
+			if duiSettings:get('closeMapOnRMB') then
+				worldMapScreen:OnCancelButtonClick()
+			end
+		"
+	}
+--	button
+--	{
+--		area 783 715 230 40
+--		enabled "worldMapScreen:IsTravelButtonVisible()"
+--		bam GUIBUTMT
+--		text "TRAVEL_BUTTON"
+--		text style "button"
+--		clickable lua "worldMapScreen:IsTravelButtonClickable()"
+--		action "
+--			worldMapScreen:TravelToSelected()
+--		"
+--	}
+}

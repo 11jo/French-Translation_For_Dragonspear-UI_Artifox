@@ -1,0 +1,24 @@
+menu
+{
+	name 'CHARGEN_SKILLS'
+	modal
+	align center center
+	ignoreesc
+	onopen "
+		-- In IWD when creating a new char, if you click on the 'Skills' button
+		-- it will go to this screen first and then to CHARGEN_PROFICIENCIES,
+		-- but when dual classing the order is reversed.
+		if createCharScreen:GetCurrentStep() == const.STEP_DUALCLASS_PROFICIENCIES then
+			createCharScreen:OnDoneButtonClick();
+		else
+			Infinity_PopMenu()
+			Infinity_PushMenu('CHARGEN_PROFICIENCIES')
+		end
+	"
+
+	label
+	{
+		area 0 0 0 0
+		mosaic GUICGSKL
+	}
+}

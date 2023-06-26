@@ -1,0 +1,16 @@
+menu
+{
+	name 'CHARGEN_SELECTPREGEN'
+	align center center
+	onOpen
+	"
+		Infinity_PopMenu()
+		Infinity_PushMenu('CHARGEN')
+	"
+
+	label
+	{
+		area 0 0 0 0
+		mosaic 'GUICGPR'
+	}
+}

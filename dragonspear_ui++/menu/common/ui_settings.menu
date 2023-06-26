@@ -1,0 +1,193 @@
+menu
+{
+	name 'UI_SETTINGS'
+	align center center
+	modal
+	onOpen
+	"
+		duiSettings:save() -- save any unsaved settings
+		duiSettings:load()
+		duiSettingToggles = duiSettings:buildToggles()
+
+		duiLargeJournal = duiSettings:get('largeJournal') and UIStrings.UI_Large or UIStrings.UI_Small
+		duiQuickLootExpertMode = duiSettings:get('quickLootExpertMode')
+		duiQuickLootExpertModeLabel = duiQuickLootExpertMode and UIStrings.UI_Expert or UIStrings.UI_Advanced
+		duiQuickLootRows = duiSettings:get('quickLootRows')
+	"
+	onClose "
+		UIhelp = nil
+		duiSettingToggles = nil
+		duiLargeJournal = nil
+		duiQuickLootExpertMode = nil
+		duiQuickLootExpertModeLabel = nil
+		duiQuickLootRows = nil
+	"
+
+	label
+	{
+		area	0 0 1024 768
+		mosaic	GUITUTB
+	}
+	label
+	{
+		area		450 40 150 44
+		text		'RG_UI_TITLE'
+		text style	title
+	}
+
+	list
+	{
+
+		column
+		{
+			width 85
+			label
+			{
+				area 0 0 -1 -1
+				text lua "duiSettingToggles[rowNumber].label"
+				text style "normal"
+				text align left center
+			}
+		}
+		column
+		{
+			width 15
+			button
+			{
+				area		20 8 32 32
+				bam			ROUNDBUT
+				glow	lua "duiSettingToggles[rowNumber].value"
+				clickable lua "duiSettingToggles[rowNumber].clickable"
+				align center center
+			}
+		}
+
+		area 106 130 400 370
+
+		rowheight	50
+		table		"duiSettingToggles"
+		var		duiSelectedToggle
+		scrollbar	'GUISCRC'
+		hideHighlight
+		action
+		"
+			local selected = duiSettingToggles[duiSelectedToggle]
+			selected.value = duiSettings:toggle(selected.key)
+			UIhelp = selected.help
+		"
+		actionAlt "UIhelp = duiSettingToggles[duiSelectedToggle].help"
+	}
+
+
+-- Journal Size
+	text
+	{
+		area		106 510 315 46
+		text lua	'UIStrings.UI_JMode'
+		text style	normal
+		text align	left center
+	}
+	button
+	{
+		area		421 510 85 46
+		text lua	"duiLargeJournal"
+		text style 	"normal"
+		text align 	center center
+		text color	'R'
+	}
+	button
+	{
+		area		106 510 400 46
+		action		"
+			duiLargeJournal = duiSettings:toggle('largeJournal') and UIStrings.UI_Large or UIStrings.UI_Small
+		"
+		actionEnter	"UIhelp = UIStrings.UI_JToggle"
+		actionExit "UIhelp = nil"
+	}
+
+-- Quickloot Mode
+	label
+	{
+		area 		106 560 315 46
+		text lua 	'UIStrings.UI_QLMode'
+		text style 	"normal"
+		text align 	left center
+	}
+	button
+	{
+		area		421 560 85 46
+		text lua	"duiQuickLootExpertModeLabel"
+		text style 	"normal"
+		text align 	center center
+		text color	'R'
+	}
+	button
+	{
+		area		106 560 400 46
+		action		"
+			duiQuickLootExpertMode = duiSettings:toggle('quickLootExpertMode')
+			duiQuickLootExpertModeLabel = duiQuickLootExpertMode and UIStrings.UI_Expert or UIStrings.UI_Advanced
+		"
+		actionEnter	"UIhelp = UIStrings.UI_QToggle"
+		actionExit "UIhelp = nil"
+	}
+
+
+-- Quickloot Expert Mode - Rows Choice
+	text
+	{
+		enabled 	"duiQuickLootExpertMode"
+		area		131 610 99 38
+		text lua	'UIStrings.UI_QRows'
+		text style	normal
+		text align	left center
+		actionEnter	"UIhelp = UIStrings.UI_QRowsExp"
+		actionExit "UIhelp = nil"
+	}
+#for i, n in ipairs({ 2, 3, 4, 5, 6, 10 }) do
+	button
+	{
+		enabled 	"duiQuickLootExpertMode"
+		area		`230 + 46 * (i - 1)` 610 46 38
+		text lua	"duiHighlightSelectedText('`n`', `n`, duiQuickLootRows)"
+		text style	"normal"
+		text align 	center center
+		action "duiQuickLootRows = duiSettings:set('quickLootRows', `n`)"
+	}
+#end
+
+-- UI Help section
+	text
+	{
+		enabled 	"UIhelp ~= nil"
+		area		574 130 402 500
+		text lua	'UIhelp'
+		text style	normal
+		text align	left top
+		text point	12
+		scrollbar	'GUISCRC'
+	}
+	button
+	{
+		bam			GUIBUTNT
+		area		188 700 201 43
+		text  "CANCEL_BUTTON"
+		text style	"button"
+		action
+		"
+			Infinity_PopMenu()
+		"
+	}
+	button
+	{
+		bam			GUIBUTNT
+		area		638 700 201 43
+		text  "DONE_BUTTON"
+		text style	"button"
+		action
+		"
+			duiSettings:save()
+			Infinity_PopMenu()
+		"
+	}
+}

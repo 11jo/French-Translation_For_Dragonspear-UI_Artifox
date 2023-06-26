@@ -1,0 +1,72 @@
+menu
+{
+	name 'JOURNAL'
+	align center center
+
+#if GAME_VERSION == 'iwd' then
+	ignoreEsc
+#end
+
+	onOpen
+	"
+		local isLarge = duiSettings:get('largeJournal')
+		local activeEngine = e:GetActiveEngine()
+
+	#if GAME_VERSION == 'iwd' then
+		if not isLarge then
+			local wasJournalVisible = showJournal == 1
+
+			-- in IWD journal creates a modal screen,
+			-- get out of the journal screen to avoid it
+			if activeEngine == journalScreen then
+				activeEngine:OnLeftPanelButtonClick(0)
+			else
+				Infinity_PopMenu('JOURNAL')
+			end
+
+			-- we're done, if are closing the journal
+			-- otherwise go to init and push menu
+			if wasJournalVisible then
+				return
+			end
+		end
+	#else
+		-- if we're trying to open journal inside of map screen,
+		-- go to the game screen and then reopen the journal screen
+		if activeEngine == mapScreen then
+			activeEngine:OnLeftPanelButtonClick(0)
+			activeEngine:OnLeftPanelButtonClick(2)
+			return
+		end
+	#end
+
+		chapter = math.max(0,Infinity_GetMaxChapterPage())
+		questOpened = 0
+		showJournal = 1
+		reinitQuests()
+		buildQuestDisplay()
+
+		if isLarge then
+			Infinity_PushMenu('JOURNAL_LARGE')
+			Infinity_PushMenu('LEFT_SIDEBAR_BOTTOM')
+			Infinity_PushMenu('RIGHT_SIDEBAR_BOTTOM')
+		else
+			Infinity_PushMenu('JOURNAL_SMALL')
+		end
+	"
+	onClose
+	"
+		if duiSettings:get('largeJournal') then
+			Infinity_PopMenu('JOURNAL_LARGE')
+		else
+			Infinity_PopMenu('JOURNAL_SMALL')
+		end
+	"
+
+	-- dummy element to satisfy the ui menu parser
+	label
+	{
+		area 0 0 0 0
+		enabled false
+	}
+}
