@@ -1,5 +1,7 @@
 # French Translation For Dragonspear UI++ d'Artifox
 
+# Traduction française du mod Dragonspear UI++ (version d'Artifox)
+
 
 
 
@@ -8,8 +10,10 @@
 
 
 
-## This version focus on the IWDEE compatibility and others fixes
+## This version, based on the one from Anongit, focuses on IWDEE compatibility and new fixes.
 
+
+## Cette version, basée sur celle d'Anongit, se concentre sur la compatibilité avec IWDEE et sur de nouvelles corrections.
 
 
 
